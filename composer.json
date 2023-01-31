@@ -1,0 +1,22 @@
+{
+    "name": "zierhut-it/spotify-marketing-api",
+    "description": "Unofficial PHP SDK for the Spotify Marketing API",
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "authors": [{
+        "name": "AlexZierhut",
+        "email": "alex@zierhut-it.de"
+    }],
+    "support": {
+        "email": "info@zierhut-it.de"
+    },
+    "require": {
+        "php": ">=8.0",
+        "guzzlehttp/guzzle": ">=6.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spotify\\Api\\Marketing\\": "src/"
+        }
+    }
+}

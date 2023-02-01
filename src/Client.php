@@ -4,7 +4,7 @@
 
     class Client {
 
-        use Report;
+        use ResourceFactory;
         use Request;
 
         public Authorization $auth;

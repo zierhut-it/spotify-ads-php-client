@@ -14,15 +14,18 @@
             return "{$this->endpoint}/{$this->version}/";
         }
 
-        public GuzzleClient $api;
-        public function api(string $action, array $params) {
-            $this->api = new GuzzleClient([
-                "base_uri" => $this->getVersionedEndpoint(),
-                'allow_redirects' => true,
-            ]);
+        public GuzzleClient $http;
+        public function api(string $method, string $action, array $params) {
+            if(!isset($this->http)) {
+                $this->http = new GuzzleClient([
+                    "base_uri" => $this->getVersionedEndpoint(),
+                    'allow_redirects' => true,
+                ]);
+            }
 
             try {
-                $response = $this->api->post(
+                $response = $this->http->request(
+                    $method,
                     $action, [
                     'headers' => [
                         'Authorization' => "Bearer ".$this->auth->getAccessToken(),

@@ -4,37 +4,54 @@
 
     namespace Spotify\Api\Marketing;
 
-    trait Report {
+    class Report extends Resource implements \Iterator {
 
-        public static function aa(){
-            return "aa";
+        use Iterateable;
+
+        public array $fields = [];
+        public function addField(string|array $fields): Report {
+            if(!is_array($fields)) $fields = [$fields, ...func_get_args()];
+            $this->fields = array_merge($this->fields, $fields);
+            $this->fields = array_unique($this->fields);
+            $this->fields = array_values($this->fields);
+            return $this;
         }
 
-        public function createReport(string $adAccountId): array {
-            $results = [];
+        public array $dimensions = [];
+        public function addDimension(string|array $dimensions): Report {
+            if(!is_array($dimensions)) $dimensions = [$dimensions, ...func_get_args()];
+            $this->dimensions = array_merge($this->dimensions, $dimensions);
+            $this->dimensions = array_unique($this->dimensions);
+            $this->dimensions = array_values($this->dimensions);
+            return $this;
+        }
+
+        public array $adAccountIds = [];
+        public function addAdAccountId(string|array $adAccountIds): Report {
+            if(!is_array($adAccountIds)) $adAccountIds = [$adAccountIds, ...func_get_args()];
+            $this->adAccountIds = array_merge($this->adAccountIds, $adAccountIds);
+            $this->adAccountIds = array_unique($this->adAccountIds);
+            $this->adAccountIds = array_values($this->adAccountIds);
+            return $this;
+        }
+
+        public int $pageSize = 500;
+
+        public array $data = [];
+
+        public function run(): array {
             $continuationToken = null;
+
             do {
-                $result = $this->api("report", [
-                    "dimensions" => [
-                        "CAMPAIGN",
-                        "AD_SET"
-                    ],
-                    "fields" => [
-                        "CLICKS",
-                        "IMPRESSIONS",
-                        "CTR",
-                        "SPEND",
-                    ],
-                    "ad_account_ids" => [
-                        $adAccountId,
-                    ],
-                    "page_size" => 500,
-                    "continuation_token" => $continuationToken,
-                ]);
+                $result = $this->client->api(
+                    "POST", "report",
+                    $this->payload($continuationToken),
+                );
+
                 $continuationToken = $result->continuation_token ?? null;
                 if(!isset($result->page)) throw new \Exception(json_encode($result, JSON_PRETTY_PRINT));
+
                 $newResults = array_map(function($result) {
-                    //echo json_encode($result, JSON_PRETTY_PRINT);exit;
                     $flatResult = new \stdClass;
                     foreach($result->dimensions as $dimension) {
                         // Extract dimension value name
@@ -51,12 +68,37 @@
                     }
                     return $flatResult;
                 }, $result->page->rows);
-                $results = array_merge($results, $newResults);
+
+                $this->data = array_merge($this->data, $newResults);
             } while(!is_null($continuationToken));
 
-            echo json_encode($results, JSON_PRETTY_PRINT);exit;
+            return $this->data;
+        }
 
-            return $results;
+        private function payload(?string $continuationToken): array {
+            $payload = [];
+
+            if(!is_null($continuationToken)) {
+                $payload["continuation_token"] = $continuationToken;
+            }
+
+            if(empty($this->fields)) {
+                throw new \Exception("Every Report needs at least one field.");
+            }
+            $payload["fields"] = $this->fields;
+
+            if(empty($this->dimensions)) {
+                throw new \Exception("Every Report needs at least one dimension.");
+            }
+            $payload["dimensions"] = $this->dimensions;
+
+            if(!empty($this->adAccountIds)) {
+                $payload["ad_account_ids"] = $this->adAccountIds;
+            }
+
+            $payload["page_size"] = $this->pageSize;
+
+            return $payload;
         }
 
     }

@@ -29,6 +29,10 @@
 
         public function setRefreshToken(string $refreshToken): void {
             $this->refreshToken = $refreshToken;
+
+            // Reset the access token as a new refresh token might be for a different user
+            // and thus the access token needs to be renewed on the next request
+            $this->expiresAt = 0;
         }
 
         public function getRedirectUrl() {
@@ -49,7 +53,7 @@
             $this->setAccessToken($result->access_token, $result->expires_in);
             $this->setRefreshToken($result->refresh_token);
 
-            return $result;
+            return $result->refresh_token;
         }
 
         private string $accessToken;

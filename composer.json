@@ -1,6 +1,6 @@
 {
-    "name": "zierhut-it/spotify-marketing-api",
-    "description": "Unofficial PHP SDK for the Spotify Marketing API",
+    "name": "zierhut-it/spotify-ads-php-client",
+    "description": "Unofficial PHP Client for the Spotify Marketing API",
     "type": "library",
     "license": "GPL-3.0-or-later",
     "authors": [{

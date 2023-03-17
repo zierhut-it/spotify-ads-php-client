@@ -4,9 +4,9 @@
 
     namespace Spotify\Api\Marketing;
 
-    class Report extends Resource implements \Iterator {
+    class Report extends Resource implements \IteratorAggregate {
 
-        use Iterateable;
+        use IterableResult;
 
         public array $fields = [];
         public function addField(string|array $fields): Report {

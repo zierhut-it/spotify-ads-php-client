@@ -2,7 +2,7 @@
 
 This is an unofficial PHP Client for the [Spotify Marketing API](https://developer.spotify.com/documentation/ads-api/).
 
-[![Maintenance](https://shields.io/badge/Mainained%3F-yes!-greed?style=for-the-badge)](https://gitHub.com/zierhut-it/spotify-ads-php-client/graphs/commit-activity)
+[![Maintenance](https://shields.io/badge/Mainained%3F-archived-red?style=for-the-badge)](https://gitHub.com/zierhut-it/spotify-ads-php-client/graphs/commit-activity)
 
 ## API Coverage
 - [ ] Ad Accounts
